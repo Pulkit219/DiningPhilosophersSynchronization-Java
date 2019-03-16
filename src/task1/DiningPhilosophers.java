@@ -1,3 +1,5 @@
+package task1;
+
 /**
  * Class DiningPhilosophers 
  * The main starter.

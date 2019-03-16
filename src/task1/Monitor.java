@@ -1,3 +1,5 @@
+package task1;
+
 /**
  * Class Monitor
  * To synchronize dining philosophers.
