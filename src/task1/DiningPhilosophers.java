@@ -37,7 +37,7 @@ public class DiningPhilosophers {
 	 * Main system starts up right here
 	 */
 	public static void main(String[] argv) {
-		int number=0;
+		int number = 0;
 		int iPhilosophers;
 		try {
 			/*
@@ -45,10 +45,9 @@ public class DiningPhilosophers {
 			 * no arguments supplied.
 			 */
 
-		
 			Scanner input = new Scanner(System.in);
 
-			System.out.print("Enter  number of philiosphers BETWEEN 2 AND 11: ");
+			System.out.print("Enter  number of philiosphers: ");
 			try {
 				number = input.nextInt();
 				if (number < 0) {
@@ -56,8 +55,7 @@ public class DiningPhilosophers {
 					System.exit(1);
 				}
 
-				while (number == 0 || number < 2) { // Checks if input is
-													// Integer
+				while (number == 0 || number < 2) {
 					System.out.println("Please provide with valid integer equal 2 or more ");
 					number = input.nextInt();
 
@@ -70,27 +68,25 @@ public class DiningPhilosophers {
 				System.exit(1);
 			}
 
-			if(number>=2){
-				iPhilosophers=number;
-			}
-			else {
+			if (number >= 2) {
+				iPhilosophers = number;
+			} else {
 				iPhilosophers = DEFAULT_NUMBER_OF_PHILOSOPHERS;
 			}
-			 
 
 			// Make the monitor aware of how many philosophers there are
 			soMonitor = new Monitor(iPhilosophers);
 
 			// Space for all the philosophers
 			Philosopher aoPhilosophers[] = new Philosopher[iPhilosophers];
-
+			System.out.println(iPhilosophers + " philosopher(s) came in for a dinner.");
 			// Let 'em sit down
 			for (int j = 0; j < iPhilosophers; j++) {
 				aoPhilosophers[j] = new Philosopher();
 				aoPhilosophers[j].start();
 			}
 
-			System.out.println(iPhilosophers + " philosopher(s) came in for a dinner.");
+			
 
 			// Main waits for all its children to die...
 			// I mean, philosophers to finish their dinner.

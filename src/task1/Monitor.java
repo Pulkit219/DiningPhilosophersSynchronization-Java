@@ -10,30 +10,33 @@ public class Monitor {
 	 * ------------ Data members ------------
 	 */
 
-	private int Chopstick[];
-	private int philophersArray[];
-	private int Totalphilsophers;
+	private int chopstick[];
+	private state philophersArray[];
+	private int totalphilsophers;
 	private boolean talking = false;
-
+	enum state {
+		  THINKING,
+		  HUNGRY,
+		  EATING,
+		} 
+	
+  
 	/**
 	 * Constructor
 	 */
 	public Monitor(int piNumberOfPhilosophers) {
 		// TODO: set appropriate number of chopsticks based on the # of
 		// philosophers
-		this.Totalphilsophers = piNumberOfPhilosophers;
-		this.philophersArray = new int[piNumberOfPhilosophers];
-		this.Chopstick = new int[piNumberOfPhilosophers];
+		this.totalphilsophers = piNumberOfPhilosophers;
+		this.philophersArray = new state[piNumberOfPhilosophers];
+		this.chopstick = new int[piNumberOfPhilosophers];
 
 		for (int i = 0; i < piNumberOfPhilosophers; i++) {
-			// 0 state means thinking.
-			// 1 state is hungry.
-			// 2 state is eating.
-			// 3 state is talking.
-			this.philophersArray[i] = 0;
+			
+			this.philophersArray[i] = state.THINKING;
 			// -1 is not used. Other values means it belongs to that
 			// philosopher.
-			this.Chopstick[i] = -1;
+			this.chopstick[i] = -1;
 		}
 	}
 
@@ -49,11 +52,11 @@ public class Monitor {
 	public synchronized void pickUp(final int piTID) {
 		{
 			int nthphilopher = piTID - 1;
-			this.philophersArray[nthphilopher] = 1; // status means hungry
+			this.philophersArray[nthphilopher] = state.HUNGRY; // 1 status means hungry
 
-			// Checking If I have both the
+			// Checking If I have both the chopsticks
 			this.test(nthphilopher);
-			while (this.philophersArray[nthphilopher] == 1) {
+			while (this.philophersArray[nthphilopher] == state.HUNGRY) {
 				// Still hungry so wait.
 				try {
 					wait();
@@ -74,14 +77,15 @@ public class Monitor {
 		{
 			int nthphilopher = piTID - 1;
 			//From eating, go straight to thinking.
-			this.philophersArray[nthphilopher] = 0;
+			this.philophersArray[nthphilopher] = state.THINKING; 
 			
 			//Put down chopsticks.
-			this.Chopstick[nthphilopher] = -1;
-			this.Chopstick[(nthphilopher + 1) % this.Totalphilsophers] = -1;
+			this.chopstick[nthphilopher] = -1;
+			this.chopstick[(nthphilopher + 1) % this.totalphilsophers] = -1;
 			
-			for(int i = 1; i < this.Totalphilsophers; i++) {
-				this.test((nthphilopher + i) % this.Totalphilsophers);
+			for(int i = 1; i < this.totalphilsophers; i++) {
+				//looping through all philosophers except the current one
+				this.test((nthphilopher + i) % this.totalphilsophers);
 			}
 			
 			//Wake up everyone.
@@ -120,23 +124,26 @@ public class Monitor {
 	}
 
 	private void test(int nthphilopher) {
-		// Try picking up left chopstick
-		if (this.philophersArray[nthphilopher] == 1) {
-			// Philosopher not hungry. No need to test
-			if (this.Chopstick[nthphilopher] == -1) {
-				// No one is using this so I pick it up for myself.
-				this.Chopstick[nthphilopher] = nthphilopher;
+		
+		// Because if the Philosopher not hungry. No need to test ,1 means hungry
+		// if Philosopher is in hungry state
+		if (this.philophersArray[nthphilopher] == state.HUNGRY) {
+			
+			
+			if (this.chopstick[nthphilopher] == -1) {
+				
+				this.chopstick[nthphilopher] = nthphilopher; //flagging true
 			}
 
-			// Try picking up the right chopstick
-			if (this.Chopstick[(nthphilopher + 1) % this.Totalphilsophers] == -1) {
-				this.Chopstick[(nthphilopher + 1) % this.Totalphilsophers] = nthphilopher;
+			
+			if (this.chopstick[(nthphilopher + 1) % this.totalphilsophers] == -1) {
+				this.chopstick[(nthphilopher + 1) % this.totalphilsophers] = nthphilopher;
 			}
 
-			if (this.Chopstick[nthphilopher] == nthphilopher
-					&& this.Chopstick[(nthphilopher + 1) % this.Totalphilsophers] == nthphilopher) {
-				// I have both the chopsticks. Start eating now.
-				this.philophersArray[nthphilopher] = 2;
+			if (this.chopstick[nthphilopher] == nthphilopher
+					&& this.chopstick[(nthphilopher + 1) % this.totalphilsophers] == nthphilopher) {
+				// I have both the chopsticks. Start eating now, setting status to 2 as eating
+				this.philophersArray[nthphilopher] = state.EATING;
 			}
 		}
 	}
